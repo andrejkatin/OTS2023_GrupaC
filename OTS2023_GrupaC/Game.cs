@@ -9,7 +9,9 @@ namespace OTS2023_GrupaC
         Up,
         Down,
         Left,
-        Right
+        Right,
+        Back,
+        Forward
     }
 
     public enum Achievement
@@ -21,12 +23,12 @@ namespace OTS2023_GrupaC
 
     public class Game
     {
-        public Map Map { get; set; }
+        public Space Map { get; set; }
         public Player Player { get; set; }
 
         public Game(Location playerLocation, Location beeLocation)
         {
-            Map = new Map();
+            Map = new Space();
             Map.InitializeMap();
 
             if (!ValidateLocationInsideMap(playerLocation) || !ValidateLocationInsideMap(beeLocation))
@@ -36,8 +38,9 @@ namespace OTS2023_GrupaC
 
             int itemX = beeLocation.X;
             int itemY = beeLocation.Y;
+            int itemZ = beeLocation.Z;
 
-            Map.Tiles[itemX, itemY].Content = TileContent.Bee;
+            Map.Tiles[itemX, itemY, itemZ].Content = TileContent.Bee;
             Player = new Player(playerLocation);
         }
 
@@ -55,12 +58,13 @@ namespace OTS2023_GrupaC
         {
             int x = location.X;
             int y = location.Y;
+            int z = location.Z;
 
             if (!ValidateLocationInsideMap(location))
             {
                 return false;
             }
-            if (Map.Tiles[x, y].Type.Equals(TileType.Hive))
+            if (Map.Tiles[x, y, z].Type.Equals(TileType.Hive))
             {
                 return Player.BeeCollected;
             }
@@ -74,12 +78,13 @@ namespace OTS2023_GrupaC
         {
             int x = location.X;
             int y = location.Y;
+            int z = location.Z;
 
-            if (x < 0 || x >= Map.MapSize || y < 0 || y >= Map.MapSize)
+            if (x < 0 || x >= Space.MapSize || y < 0 || y >= Space.MapSize)
             {
                 return false;
             }
-            if (Map.Tiles[x, y].Type.Equals(TileType.MapBarrier))
+            if (Map.Tiles[x, y, z].Type.Equals(TileType.MapBarrier))
             {
                 return false;
             }
@@ -90,16 +95,17 @@ namespace OTS2023_GrupaC
         {
             int x = Player.Location.X;
             int y = Player.Location.Y;
+            int z = Player.Location.Z;
 
-            if (Map.Tiles[x, y].Content.Equals(TileContent.Nectar))
+            if (Map.Tiles[x, y, z].Content.Equals(TileContent.Nectar))
             {
                 Player.AmountOfNectar++;
             }
-            else if (Map.Tiles[x, y].Content.Equals(TileContent.Bee))
+            else if (Map.Tiles[x, y, z].Content.Equals(TileContent.Bee))
             {
                 Player.BeeCollected = true;
             }
-            else if (Map.Tiles[x, y].Type.Equals(TileType.Hive))
+            else if (Map.Tiles[x, y, z].Type.Equals(TileType.Hive))
             {
                 Player.AmountOfHoneyJars += Player.AmountOfNectar;
                 Player.AmountOfNectar = 0;
